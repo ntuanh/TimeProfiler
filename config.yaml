@@ -1,0 +1,13 @@
+mode: a        # or communication_layer
+write_to_csv: true
+
+time_layer:
+  num_round: 5
+
+rabbit:
+  queue_device_1: "device1"
+  queue_device_2: "device2"
+  address: "127.0.0.1"
+  username: "guest"
+  password: "guest"
+  virtual_host: "/"
