@@ -77,7 +77,8 @@ class MessageSender:
                         time_new = time.time_ns()
                         t = time_new - time_old
                         avg_time += t / 2
-                        receiver_name = body.get("receiver_name")
+                        data = pickle.loads(body)
+                        receiver_name = data.get("receiver_name")
                         break
                     else:
                         continue
