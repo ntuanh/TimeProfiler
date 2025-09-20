@@ -29,5 +29,5 @@ if __name__ == "__main__":
     config = load_config("config.yaml")
     if config["mode"] == "time_layer":
         time_layers()
-    else :
-        print(f"Mode : {config["mode"]}")
+    # else :
+    #     print(f"Mode : {config["mode"]}")
