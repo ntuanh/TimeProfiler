@@ -18,6 +18,7 @@ class MessageReceiver:
                 credentials,
             )
         )
+
         self.channel = self.connection.channel()
         self.channel.queue_declare(queue=self.queue_device_1, durable=True)
         self.channel.queue_declare(queue=self.queue_device_2, durable=True)

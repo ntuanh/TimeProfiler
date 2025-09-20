@@ -1,64 +1,82 @@
-import pika
+import os
+import json
 import time
+import yaml
+import pika
 import pickle
-from tqdm import tqdm
+
+from src.Utils import get_output_sizes
+
+MAX_SIZE_QUEUE = 16777216
 
 
 class MessageSender:
-    def __init__(self, config: dict):
-        self.rounds = config["time_layer"]["num_round"]
-        self.queue_device_1 = config["rabbit"]["queue_device_1"]
-        self.queue_device_2 = config["rabbit"]["queue_device_2"]
-
-        credentials = pika.PlainCredentials(
-            config["rabbit"]["username"], config["rabbit"]["password"]
-        )
+    def __init__(self, config):
+        self.config = config
         self.connection = pika.BlockingConnection(
             pika.ConnectionParameters(
-                config["rabbit"]["address"],
-                5672,
-                config["rabbit"]["virtual_host"],
-                credentials,
+                host=config["rabbit"]["address"],
+                credentials=pika.PlainCredentials(
+                    config["rabbit"]["username"],
+                    config["rabbit"]["password"]
+                ),
+                virtual_host=config["rabbit"]["virtual_host"]
             )
         )
+        self.queue_device_1 = config["rabbit"]["queue_device_1"]
+        self.queue_device_2 = config["rabbit"]["queue_device_2"]
         self.channel = self.connection.channel()
-        self.channel.queue_declare(queue=self.queue_device_1, durable=True)
-        self.channel.queue_declare(queue=self.queue_device_2, durable=True)
+        self.queue = "time_layers"
+        self.channel.queue_declare(queue=self.queue_device_1 , durable= True)
+        self.channel.queue_declare(queue=self.queue_device_2 , durable= True)
 
-        self.size_data = [i * 10**6 for i in range(1, 10)]
-        self.layer_comm = []
 
-    def send_message(self, messages, notify="yes"):
-        message_with_timestamp = {"message": messages, "notify": notify}
-        self.channel.basic_publish(
-            exchange="",
-            routing_key=self.queue_device_2,
-            body=pickle.dumps(message_with_timestamp),
-        )
+        # compute dynamically from yaml
+        cfg_path = os.path.join(os.path.dirname(__file__), "cfg", "yolov8.yaml")
+        self.size_data = get_output_sizes(cfg_path)
+
+        self.start_time = time.time()
+        self.num_round = self.config["time_layer"]["num_round"]
+
+    def send_message(self , messages, notify='yes'):
+        message_with_timestamp = {
+            "message": messages,
+            "notify": notify
+        }
+        self.channel.basic_publish(exchange='',
+                              routing_key=self.queue_device_2,
+                              body=pickle.dumps(message_with_timestamp)
+                              )
 
     def run(self):
-        print("Sender running...")
+        num_layer_output = 1
         for size in self.size_data:
-            message = "1" * size
+            # print("layer : " , num_layer_output , end="  ")
+            num_layer_output += 1
+            size_bytes = int(size * 1e6)
+            if size_bytes >= MAX_SIZE_QUEUE :
+                print("Chubby size ")
+                continue
+            message = '1' * size_bytes
             avg_time = 0.0
-
-            for _ in tqdm(range(self.rounds), desc=f"Size {size}"):
+            for _ in range(self.num_round):
                 time_old = time.time_ns()
-                self.send_message(message, "yes")
-
+                self.send_message(message, 'yes')
                 while True:
-                    method_frame, _, body = self.channel.basic_get(
-                        queue=self.queue_device_1, auto_ack=True
-                    )
+                    method_frame, header_frame, body = self.channel.basic_get(queue=self.queue_device_1, auto_ack=True)
                     if method_frame and body:
                         time_new = time.time_ns()
-                        avg_time += (time_new - time_old) / 2
+                        t = time_new - time_old
+                        avg_time += t / 2
+                        # print(" " , t/2)
                         break
+                    else:
+                        continue
+            avg_time = avg_time / self.num_round
+            time_ms = avg_time / 1e6
+            print(f"Layer {num_layer_output}: {time_ms:.3f} ms")
+        self.send_message('', 'no')
 
-            avg_time = avg_time / self.rounds
-            self.layer_comm.append(avg_time)
-
-        self.send_message("", "no")
-        self.channel.queue_delete(queue=self.queue_device_1)
-        self.connection.close()
-        print("Sender finished:", self.layer_comm)
+def time_layers(config):
+    sender = MessageSender(config)
+    sender.run()
