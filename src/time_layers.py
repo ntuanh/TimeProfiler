@@ -32,7 +32,7 @@ class LayerProfiler:
         self.layer_start[m.i] = time.perf_counter()
 
     def _hook_fn(self, m, inp, out):
-        """Measure elapsed time for each layer."""
+        """ Measure elapsed time for each layer."""
         elapsed = (time.perf_counter() - self.layer_start[m.i]) * 1e6  # μs
         name = f"{m.__class__.__name__}_{m.i}"
         if name not in self.layer_times:
@@ -62,7 +62,7 @@ class LayerProfiler:
         # Save results
         headers = list(avg_times.keys())
         row = list(avg_times.values())
-        write_partial("machine_name" , headers, row, filename=filename)
+        write_partial("machine_name", "device" , headers, row, filename=filename)
 
         print(f"[Num_runs] {self.num_runs}")
         print(f"Results saved to {filename}")

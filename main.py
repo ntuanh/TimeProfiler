@@ -9,7 +9,7 @@ def load_config(path="config.yaml"):
         return yaml.safe_load(f)
 
 
-def time_layers():
+def comm_layers():
     parser = argparse.ArgumentParser()
     parser.add_argument("--role", choices=["sender", "receiver"], required=True)
     parser.add_argument("--config", default="config.yaml", help="Path to config file")
@@ -28,6 +28,6 @@ def time_layers():
 if __name__ == "__main__":
     config = load_config("config.yaml")
     if config["mode"] == "communication_layer":
-        time_layers()
-    # else :
-    #     print(f"Mode : {config["mode"]}")
+        comm_layers()
+    # elif config["mode"] == "time_layer":
+    #     time_layer_app =

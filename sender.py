@@ -4,6 +4,10 @@ import time
 import yaml
 import pika
 import pickle
+import socket
+from src.Utils import write_partial
+# device_name = socket.gethostname()
+
 
 from src.Utils import get_output_sizes
 
@@ -50,11 +54,17 @@ class MessageSender:
 
     def run(self):
         num_layer_output = 1
+        sender_name = socket.gethostname()
+        receiver_name = ""
+        header = []
+        row = []
         for size in self.size_data:
             num_layer_output += 1
+            header.append(f"output_L{num_layer_output}")
             size_bytes = int(size * 1e6)
             if size_bytes >= MAX_SIZE_QUEUE :
                 print("Chubby size ")
+                row.append(-1)
                 continue
             message = '1' * size_bytes
             avg_time = 0.0
@@ -67,13 +77,17 @@ class MessageSender:
                         time_new = time.time_ns()
                         t = time_new - time_old
                         avg_time += t / 2
+                        receiver_name = body.get("receiver_name")
                         break
                     else:
                         continue
             avg_time = avg_time / self.num_round
             time_ms = avg_time / 1e6
+            row.append(f"{time_ms:.3f} ms")
             print(f"Layer {num_layer_output}: {time_ms:.3f} ms")
         self.send_message('', 'no')
+        write_partial(sender_name , receiver_name , header , row , "comm_names.csv")
+
 
 def time_layers(config):
     sender = MessageSender(config)

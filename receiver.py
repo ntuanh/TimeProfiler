@@ -1,5 +1,6 @@
 import pika
 import pickle
+import socket
 
 
 class MessageReceiver:
@@ -24,7 +25,10 @@ class MessageReceiver:
         self.channel.queue_declare(queue=self.queue_device_2, durable=True)
 
     def send_message(self, messages):
-        message_with_timestamp = {"message": messages}
+        message_with_timestamp = {
+            "message": messages,
+            "receiver_name" : socket.gethostname()
+        }
         self.channel.basic_publish(
             exchange="",
             routing_key=self.queue_device_1,
