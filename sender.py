@@ -64,7 +64,7 @@ class MessageSender:
             size_bytes = int(size * 1e6)
             if size_bytes >= MAX_SIZE_QUEUE :
                 print("Chubby size ")
-                row.append(-1)
+                row.append(f"<{size}>")
                 continue
             message = '1' * size_bytes
             avg_time = 0.0
@@ -87,7 +87,9 @@ class MessageSender:
             row.append(f"{time_ms:.3f} ms")
             print(f"Layer {num_layer_output}: {time_ms:.3f} ms")
         self.send_message('', 'no')
-        write_partial(sender_name , receiver_name , header , row , "comm_names.csv")
+        row.insert(1 , receiver_name)
+        row.insert(1 , sender_name)
+        write_partial("sender_name ", "receiver_name" , header , row , "comm_names.csv")
 
 
 def time_layers(config):
