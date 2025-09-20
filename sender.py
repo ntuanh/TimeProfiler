@@ -87,7 +87,7 @@ class MessageSender:
             row.append(f"{time_ms:.3f} ms")
             # print(f"Layer {num_layer_output}: {time_ms:.3f} ms")
         self.send_message('', 'no')
-        write_partial("sender_name ", "receiver_name" , header , row , data_1= sender_name , data_2=receiver_name,  "comm_names.csv")
+        write_partial("sender_name ", "receiver_name" , header , row , data_1= sender_name , data_2=receiver_name, filename= "comm_names.csv")
 
 
 def time_layers(config):
