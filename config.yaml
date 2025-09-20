@@ -1,4 +1,4 @@
-mode: time_layer        # or communication_layer
+mode: communication_layer        # or time_layer
 write_to_csv: true
 
 time_layer:

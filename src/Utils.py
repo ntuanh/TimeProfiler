@@ -13,10 +13,10 @@ try:
 except ImportError:
     device_model = "cpu"
 
-def write_partial(headers, row, filename="layer_times.csv"):
+def write_partial(col_1 , col_2 , headers, row, filename="layer_times.csv"):
     # Add machine name + device model
     machine_name = platform.node()
-    headers = ["machine_name", "device_model"] + headers
+    headers = [col_1, col_2] + headers
     row = [machine_name, device_model] + row
 
     if not os.path.exists(filename):

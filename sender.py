@@ -51,7 +51,6 @@ class MessageSender:
     def run(self):
         num_layer_output = 1
         for size in self.size_data:
-            # print("layer : " , num_layer_output , end="  ")
             num_layer_output += 1
             size_bytes = int(size * 1e6)
             if size_bytes >= MAX_SIZE_QUEUE :
@@ -68,7 +67,6 @@ class MessageSender:
                         time_new = time.time_ns()
                         t = time_new - time_old
                         avg_time += t / 2
-                        # print(" " , t/2)
                         break
                     else:
                         continue
