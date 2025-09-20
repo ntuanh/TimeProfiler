@@ -85,11 +85,9 @@ class MessageSender:
             avg_time = avg_time / self.num_round
             time_ms = avg_time / 1e6
             row.append(f"{time_ms:.3f} ms")
-            print(f"Layer {num_layer_output}: {time_ms:.3f} ms")
+            # print(f"Layer {num_layer_output}: {time_ms:.3f} ms")
         self.send_message('', 'no')
-        # header_frame.insert(1 , receiver_name)
-        # row.insert(1 , sender_name)
-        write_partial("sender_name ", "receiver_name" , header , row , "comm_names.csv")
+        write_partial("sender_name ", "receiver_name" , header , row , data_1= sender_name , data_2=receiver_name,  "comm_names.csv")
 
 
 def time_layers(config):

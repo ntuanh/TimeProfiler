@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-import platform
+import socket
 import yaml
 
 # Optional: use torch if installed to detect GPU
@@ -13,11 +13,15 @@ try:
 except ImportError:
     device_model = "cpu"
 
-def write_partial(col_1 , col_2 , headers, row, filename="layer_times.csv"):
+def write_partial(col_1 , col_2 , headers, row, data_1 ="None" , data_2 = "None", filename="layer_times.csv" ):
     # Add machine name + device model
-    machine_name = platform.node()
+    # machine_name = platform.node()
+    if data_1 == "None" :
+        data_1 = socket.gethostname()
+    if data_2 == "None":
+        data_2 = device_model
     headers = [col_1, col_2] + headers
-    row = [machine_name, device_model] + row
+    row = [data_1 , data_2] + row
 
     if not os.path.exists(filename):
         df = pd.DataFrame([row], columns=headers)
