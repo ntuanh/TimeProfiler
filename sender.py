@@ -87,8 +87,8 @@ class MessageSender:
             row.append(f"{time_ms:.3f} ms")
             print(f"Layer {num_layer_output}: {time_ms:.3f} ms")
         self.send_message('', 'no')
-        row.insert(1 , receiver_name)
-        row.insert(1 , sender_name)
+        # header_frame.insert(1 , receiver_name)
+        # row.insert(1 , sender_name)
         write_partial("sender_name ", "receiver_name" , header , row , "comm_names.csv")
 
 
