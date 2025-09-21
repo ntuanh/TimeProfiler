@@ -37,7 +37,8 @@ class MessageSender:
 
         # compute dynamically from yaml
         cfg_path = os.path.join(os.path.dirname(__file__), "cfg", "yolov8.yaml")
-        self.size_data = get_output_sizes(cfg_path)
+        # self.size_data = get_output_sizes(cfg_path)
+        self.size_data = get_output_sizes("cfg/yolov8.yaml")
 
         self.start_time = time.time()
         self.num_round = self.config["time_layer"]["num_round"]
@@ -63,7 +64,7 @@ class MessageSender:
             header.append(f"output_L{num_layer_output}")
             size_bytes = int(size * 1e6)
             if size_bytes >= MAX_SIZE_QUEUE :
-                print("Chubby size ")
+                # print("Chubby size ")
                 row.append(f"<{size}>")
                 continue
             message = '1' * size_bytes

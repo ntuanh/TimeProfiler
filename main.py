@@ -28,7 +28,7 @@ def comm_layers():
 
 if __name__ == "__main__":
     config = load_config("config.yaml")
-    if config["mode"] == "communication_times":
+    if config["mode"] == "comm_times":
         comm_layers()
     elif config["mode"] == "layer_times":
         layer_times_app = LayerProfiler(
