@@ -9,7 +9,7 @@ class LayerProfiler:
     def __init__(self, config):
         self.yaml_path = config["model"]               # path to yolov8.yaml
         self.num_runs = config["time_layer"]["num_round"]
-        self.input_shape = config["input_shape"]
+        self.input_shape = config["time_layer"]["input_shape"]
 
         # Build model from YAML (no pretrained weights)
         self.model = DetectionModel(self.yaml_path, nc=80, verbose=False)
