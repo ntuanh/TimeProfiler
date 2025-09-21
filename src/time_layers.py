@@ -1,18 +1,18 @@
+from ultralytics.nn.tasks import DetectionModel
 import torch
 import time
 import pandas as pd
-from ultralytics import YOLO
 from src.Utils import write_partial
 
 
 class LayerProfiler:
-    def __init__(self, model_path="yolo11n.pt", num_runs=500, input_shape=(1, 3, 640, 640)):
-        self.model_path = model_path
-        self.num_runs = num_runs
-        self.input_shape = input_shape
+    def __init__(self, config):
+        self.yaml_path = config["model"]               # path to yolov8.yaml
+        self.num_runs = config["time_layer"]["num_round"]
+        self.input_shape = config["input_shape"]
 
-        # Load YOLO model
-        self.model = YOLO(self.model_path).model
+        # Build model from YAML (no pretrained weights)
+        self.model = DetectionModel(self.yaml_path, nc=80, verbose=False)
         self.model.eval()
 
         # Random input tensor
@@ -28,11 +28,9 @@ class LayerProfiler:
             m.register_forward_hook(self._hook_fn)
 
     def _pre_hook(self, m, inp):
-        """Store start time for each layer."""
         self.layer_start[m.i] = time.perf_counter()
 
     def _hook_fn(self, m, inp, out):
-        """ Measure elapsed time for each layer."""
         elapsed = (time.perf_counter() - self.layer_start[m.i]) * 1e6  # μs
         name = f"{m.__class__.__name__}_{m.i}"
         if name not in self.layer_times:
@@ -62,10 +60,8 @@ class LayerProfiler:
         # Save results
         headers = list(avg_times.keys())
         row = list(avg_times.values())
-        machine_name = platform.node()
-        write_partial("machine_name", "device" , headers, row, filename=filename)
+        write_partial("machine", "device", headers, row, filename=filename)
 
         print(f"[Num_runs] {self.num_runs}")
         print(f"Results saved to {filename}")
         return avg_times
-

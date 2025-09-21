@@ -14,8 +14,6 @@ except ImportError:
     device_model = "cpu"
 
 def write_partial(col_1 , col_2 , headers, row, data_1 ="None" , data_2 = "None", filename="layer_times.csv" ):
-    # Add machine name + device model
-    # machine_name = platform.node()
     if data_1 == "None" :
         data_1 = socket.gethostname()
     if data_2 == "None":

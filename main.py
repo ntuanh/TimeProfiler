@@ -2,6 +2,7 @@ import argparse
 import yaml
 from sender import MessageSender
 from receiver import MessageReceiver
+from src.time_layers import LayerProfiler
 
 
 def load_config(path="config.yaml"):
@@ -27,7 +28,11 @@ def comm_layers():
 
 if __name__ == "__main__":
     config = load_config("config.yaml")
-    if config["mode"] == "communication_layer":
+    if config["mode"] == "communication_times":
         comm_layers()
-    # elif config["mode"] == "time_layer":
-    #     time_layer_app =
+    elif config["mode"] == "layer_times":
+        layer_times_app = LayerProfiler(config)
+        layer_times_app.run()
+    else :
+        print("Wrong model's name !")
+

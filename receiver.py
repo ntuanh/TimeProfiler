@@ -29,7 +29,7 @@ class MessageReceiver:
             "message": messages,
             "receiver_name" : socket.gethostname()
         }
-        print( "receiver_name : " , socket.gethostname())
+        # print( "receiver_name : " , socket.gethostname())
         self.channel.basic_publish(
             exchange="",
             routing_key=self.queue_device_1,
