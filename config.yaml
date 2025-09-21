@@ -1,4 +1,4 @@
-mode: layer_times        # or layer_times or communication_times
+mode: communication_times        # or layer_times or communication_times
 model: "yolo11n.pt"
 write_to_csv: true
 
