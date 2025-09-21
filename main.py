@@ -1,7 +1,7 @@
 import argparse
 import yaml
-from sender import MessageSender
-from receiver import MessageReceiver
+from src.sender import MessageSender
+from src.receiver import MessageReceiver
 from src.time_layers import LayerProfiler
 
 
@@ -31,7 +31,11 @@ if __name__ == "__main__":
     if config["mode"] == "communication_times":
         comm_layers()
     elif config["mode"] == "layer_times":
-        layer_times_app = LayerProfiler(config)
+        layer_times_app = LayerProfiler(
+            model_path= config["model"] ,
+            num_runs=config["time_layer"]["num_round"] ,
+            input_shape= config["time_layer"]["input_shape"]
+        )
         layer_times_app.run()
     else :
         print("Wrong model's name !")

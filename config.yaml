@@ -4,7 +4,7 @@ write_to_csv: true
 
 time_layer:
   num_round: 5
-  input_shape: (1, 3, 640, 640)
+  input_shape: [1, 3, 640, 640]
 
 rabbit:
   queue_device_1: "device1"
