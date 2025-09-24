@@ -6,6 +6,7 @@ import pika
 import pickle
 import socket
 from src.Utils import write_partial
+from pathlib import Path
 # device_name = socket.gethostname()
 
 
@@ -34,7 +35,8 @@ class MessageSender:
         self.channel.queue_declare(queue=self.queue_device_1 , durable= True)
         self.channel.queue_declare(queue=self.queue_device_2 , durable= True)
 
-        cfg_path = r"D:\SplitInference\TimeProfiler\cfg\yolov11.yaml"
+        project_root = Path.cwd()
+        cfg_path = project_root / "cfg" / "yolov11.yaml"
         self.size_data = get_output_sizes(cfg_path)
 
         self.start_time = time.time()
