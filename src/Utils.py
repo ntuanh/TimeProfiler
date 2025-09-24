@@ -13,11 +13,13 @@ try:
 except ImportError:
     device_model = "cpu"
 
-def write_partial(col_1 , col_2 , headers, row, data_1 ="None" , data_2 = "None", filename="layer_times.csv" ):
+def write_partial( headers, row, data_1 ="None" , data_2 = "None", filename="layer_times.csv" ):
     if data_1 == "None" :
         data_1 = socket.gethostname()
     if data_2 == "None":
         data_2 = device_model
+    col_1 = "sender/machine"
+    col_2 = "receiver/device"
     headers = [col_1, col_2] + headers
     row = [data_1 , data_2] + row
 

@@ -36,7 +36,23 @@ if __name__ == "__main__":
             num_runs=config["time_layer"]["num_round"] ,
             input_shape= config["time_layer"]["input_shape"]
         )
-        layer_times_app.run()
+        layer_times_app.run(filename=config["write_to_csv"]["layer_time"])
+    elif config["mode"] == "run_all" :
+        filename = "output.csv"
+
+        app_sender = MessageSender(config)
+        app_sender.run(filename=filename)
+
+        app_receiver = MessageReceiver(config)
+        app_receiver.run()
+
+        layer_times_app = LayerProfiler(
+            model_path=config["model"],
+            num_runs=config["time_layer"]["num_round"],
+            input_shape=config["time_layer"]["input_shape"]
+        )
+        layer_times_app.run(filename=filename)
+
     else :
         print("Wrong model's name !")
 

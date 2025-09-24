@@ -1,6 +1,9 @@
-mode: comm_times        # or layer_times or comm_times
+mode: run_all       # or layer_times or comm_times or run_all
 model: "yolo11n.pt"
-write_to_csv: true
+write_to_csv:
+  layer_time: layer_times.csv
+  comm_times: comm_times.csv
+
 
 time_layer:
   num_round: 5

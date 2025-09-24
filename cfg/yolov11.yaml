@@ -1,0 +1,45 @@
+# Ultralytics YOLOv11 🚀, AGPL-3.0 license
+# YOLOv11 object detection model with P3-P5 outputs
+
+# Parameters
+nc: 80  # number of classes
+scales: # [depth, width, max_channels]
+  n: [0.33, 0.25, 1024]   # YOLOv11n
+  s: [0.33, 0.50, 1024]   # YOLOv11s
+  m: [0.67, 0.75, 768]    # YOLOv11m
+  l: [1.00, 1.00, 512]    # YOLOv11l
+  x: [1.00, 1.25, 512]    # YOLOv11x
+
+# YOLOv11-nano backbone
+backbone:
+  # [from, repeats, module, args]
+  - [-1, 1, Conv, [64, 3, 2]]       # 0-P1/2
+  - [-1, 1, Conv, [128, 3, 2]]      # 1-P2/4
+  - [-1, 3, C3k2, [128]]            # 2
+  - [-1, 1, Conv, [256, 3, 2]]      # 3-P3/8
+  - [-1, 6, C3k2, [256]]            # 4
+  - [-1, 1, Conv, [512, 3, 2]]      # 5-P4/16
+  - [-1, 6, C3k2, [512]]            # 6
+  - [-1, 1, Conv, [1024, 3, 2]]     # 7-P5/32
+  - [-1, 1, SPPF, [1024, 5]]        # 8: spatial pyramid pooling fast
+  - [-1, 3, C2PSA, [1024]]          # 9: parallel spatial attention
+
+# YOLOv11 head (PAN + C3k2)
+head:
+  - [-1, 1, nn.Upsample, [None, 2, 'nearest']]
+  - [[-1, 6], 1, Concat, [1]]       # cat backbone P4
+  - [-1, 3, C3k2, [512]]            # 12
+
+  - [-1, 1, nn.Upsample, [None, 2, 'nearest']]
+  - [[-1, 4], 1, Concat, [1]]       # cat backbone P3
+  - [-1, 3, C3k2, [256]]            # 15 (P3/8)
+
+  - [-1, 1, Conv, [256, 3, 2]]
+  - [[-1, 12], 1, Concat, [1]]      # cat head P4
+  - [-1, 3, C3k2, [512]]            # 18 (P4/16)
+
+  - [-1, 1, Conv, [512, 3, 2]]
+  - [[-1, 9], 1, Concat, [1]]       # cat head P5 (concat with C2PSA output)
+  - [-1, 3, C3k2, [1024]]           # 21 (P5/32)
+
+  - [[15, 18, 21], 1, Detect, [nc]] # Detect(P3, P4, P5)
