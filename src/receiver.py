@@ -36,7 +36,7 @@ class MessageReceiver:
             body=pickle.dumps(message_with_timestamp),
         )
 
-    def run(self):
+    def run(self , filename):
         print("Receiver waiting...")
 
         while True:

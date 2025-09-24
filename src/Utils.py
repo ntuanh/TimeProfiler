@@ -13,13 +13,11 @@ try:
 except ImportError:
     device_model = "cpu"
 
-def write_partial( headers, row, data_1 ="None" , data_2 = "None", filename="layer_times.csv" ):
+def write_partial( col_1 , col_2 , headers, row, data_1 ="None" , data_2 = "None", filename="layer_times.csv" ):
     if data_1 == "None" :
         data_1 = socket.gethostname()
     if data_2 == "None":
         data_2 = device_model
-    col_1 = "sender/machine"
-    col_2 = "receiver/device"
     headers = [col_1, col_2] + headers
     row = [data_1 , data_2] + row
 
@@ -41,11 +39,10 @@ def write_partial( headers, row, data_1 ="None" , data_2 = "None", filename="lay
 
     print(f"[CSV] Saved row -> {filename}")
 
-
 def get_output_sizes(cfg_path, img_size=(640, 640)):
     """
-    Estimate output tensor sizes (MB) for each layer defined in YOLOv8-style YAML.
-    - Only uses config (no torch).
+    Estimate output tensor sizes (MB) for each layer defined in YOLOv11 YAML.
+    - Works without torch.
     - Assumes float32 (4 bytes).
     - Detect layer returns 0.0 placeholder unless anchors/nc are specified.
     """
@@ -56,28 +53,27 @@ def get_output_sizes(cfg_path, img_size=(640, 640)):
     H, W = img_size
     C = 3  # RGB input
     sizes = []
-
-    # Keep track of outputs for skip/concat
     saved = {}
 
-    # process backbone + head
+    # YOLOv11: layers are in backbone + head
     for idx, layer in enumerate(cfg["backbone"] + cfg["head"]):
         from_idx, repeats, module, args = layer
         module = str(module)
 
-        if module == "Conv":
+        if module in ("Conv", "ConvBnAct"):
             C = args[0]
-            H //= args[2]  # stride
-            W //= args[2]
-        elif module == "C2f":
+            stride = args[2] if len(args) > 2 else 1
+            H //= stride
+            W //= stride
+        elif module in ("C2f", "C3", "C3k", "C3k2", "C3TR", "C2PSA"):
             C = args[0]
         elif module == "SPPF":
             C = args[0]
         elif "Upsample" in module:
-            H *= args[1]
-            W *= args[1]
+            scale = args[1] if len(args) > 1 else 2
+            H *= scale
+            W *= scale
         elif module == "Concat":
-            # Sum channels of sources
             total_C = 0
             for src in from_idx:
                 if src == -1:
@@ -88,12 +84,11 @@ def get_output_sizes(cfg_path, img_size=(640, 640)):
                     raise ValueError(f"Concat source not handled: {src}")
             C = total_C
         elif module == "Detect":
-            # Hard to estimate from YAML only
-            sizes.append(0.0)
+            sizes.append(0.0)  # can't infer from YAML
             saved[idx] = (C, H, W)
             continue
         else:
-            # fallback (if unknown, just keep channels)
+            # unknown block → keep previous channels
             pass
 
         size_mb = round(C * H * W * dtype_size / (1024 * 1024), 2)
@@ -101,4 +96,3 @@ def get_output_sizes(cfg_path, img_size=(640, 640)):
         saved[idx] = (C, H, W)
 
     return sizes
-

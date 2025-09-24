@@ -62,8 +62,5 @@ class LayerProfiler:
         # Save results
         headers = list(avg_times.keys())
         row = list(avg_times.values())
-        write_partial(headers, row, filename=filename)
-
-        print(f"[Num_runs] {self.num_runs}")
-        print(f"Results saved to {filename}")
+        write_partial("machine" , "device" , headers, row, filename=filename)
         return avg_times

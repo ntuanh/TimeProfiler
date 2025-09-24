@@ -34,11 +34,8 @@ class MessageSender:
         self.channel.queue_declare(queue=self.queue_device_1 , durable= True)
         self.channel.queue_declare(queue=self.queue_device_2 , durable= True)
 
-
-        # compute dynamically from yaml
-        cfg_path = os.path.join(os.path.dirname(__file__), "cfg", "yolov8.yaml")
-        # self.size_data = get_output_sizes(cfg_path)
-        self.size_data = get_output_sizes("cfg/yolov8.yaml")
+        cfg_path = r"D:\SplitInference\TimeProfiler\cfg\yolov11.yaml"
+        self.size_data = get_output_sizes(cfg_path)
 
         self.start_time = time.time()
         self.num_round = self.config["time_layer"]["num_round"]
@@ -64,7 +61,6 @@ class MessageSender:
             header.append(f"output_L{num_layer_output}")
             size_bytes = int(size * 1e6)
             if size_bytes >= MAX_SIZE_QUEUE :
-                # print("Chubby size ")
                 row.append(f"<{size}>")
                 continue
             message = '1' * size_bytes
@@ -89,7 +85,7 @@ class MessageSender:
             # print(f"Layer {num_layer_output}: {time_ms:.3f} ms")
         self.send_message('', 'no')
 
-        write_partial( header , row , data_1= sender_name , data_2=receiver_name , filename=filename)
+        write_partial( "sender" , "receiver" , header , row , data_1= sender_name , data_2=receiver_name , filename=filename)
 
 
 

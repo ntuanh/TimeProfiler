@@ -9,7 +9,6 @@ def load_config(path="config.yaml"):
     with open(path, "r") as f:
         return yaml.safe_load(f)
 
-
 def comm_layers():
     parser = argparse.ArgumentParser()
     parser.add_argument("--role", choices=["sender", "receiver"], required=True)
@@ -22,9 +21,7 @@ def comm_layers():
         app = MessageSender(config)
     else:
         app = MessageReceiver(config)
-
-    app.run()
-
+    app.run("comm_times.csv")
 
 if __name__ == "__main__":
     config = load_config("config.yaml")
@@ -38,20 +35,13 @@ if __name__ == "__main__":
         )
         layer_times_app.run(filename=config["write_to_csv"]["layer_time"])
     elif config["mode"] == "run_all" :
-        filename = "output.csv"
-
-        app_sender = MessageSender(config)
-        app_sender.run(filename=filename)
-
-        app_receiver = MessageReceiver(config)
-        app_receiver.run()
-
+        comm_layers()
         layer_times_app = LayerProfiler(
             model_path=config["model"],
             num_runs=config["time_layer"]["num_round"],
             input_shape=config["time_layer"]["input_shape"]
         )
-        layer_times_app.run(filename=filename)
+        layer_times_app.run(filename=config["write_to_csv"]["layer_time"])
 
     else :
         print("Wrong model's name !")
