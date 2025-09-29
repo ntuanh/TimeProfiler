@@ -3,15 +3,15 @@ import yaml
 from src.sender import MessageSender
 from src.receiver import MessageReceiver
 from src.time_layers import LayerProfiler
-
+from src.controller import Controller
 
 def load_config(path="config.yaml"):
     with open(path, "r") as f:
         return yaml.safe_load(f)
 
-def comm_layers():
+def start_running():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--role", choices=["sender", "receiver"], required=True)
+    parser.add_argument("--role", choices=["sender", "receiver", "controller"], required=True)
     parser.add_argument("--config", default="config.yaml", help="Path to config file")
     args = parser.parse_args()
 
@@ -19,30 +19,11 @@ def comm_layers():
 
     if args.role == "sender":
         app = MessageSender(config)
-    else:
+    elif args.role == "receiver":
         app = MessageReceiver(config)
-    app.run("comm_times.csv")
+    else:
+        app = Controller(config)
+    app.run()
 
 if __name__ == "__main__":
-    config = load_config("config.yaml")
-    if config["mode"] == "comm_times":
-        comm_layers()
-    elif config["mode"] == "layer_times":
-        layer_times_app = LayerProfiler(
-            model_path= config["model"] ,
-            num_runs=config["time_layer"]["num_round"] ,
-            input_shape= config["time_layer"]["input_shape"]
-        )
-        layer_times_app.run(filename=config["write_to_csv"]["layer_time"])
-    elif config["mode"] == "run_all" :
-        comm_layers()
-        layer_times_app = LayerProfiler(
-            model_path=config["model"],
-            num_runs=config["time_layer"]["num_round"],
-            input_shape=config["time_layer"]["input_shape"]
-        )
-        layer_times_app.run(filename=config["write_to_csv"]["layer_time"])
-
-    else :
-        print("Wrong model's name !")
-
+    start_running()

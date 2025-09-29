@@ -6,10 +6,10 @@ from src.Utils import write_partial
 
 
 class LayerProfiler:
-    def __init__(self, model_path="yolo11n.pt", num_runs=500, input_shape=(1, 3, 640, 640)):
-        self.model_path = model_path
-        self.num_runs = num_runs
-        self.input_shape = input_shape
+    def __init__(self, config):
+        self.model_path = config["model"]
+        self.num_runs = config["time_layer"]["num_round"]
+        self.input_shape = config["time_layer"]["input_shape"]
 
         # Load YOLO model
         self.model = YOLO(self.model_path).model
@@ -39,7 +39,7 @@ class LayerProfiler:
             self.layer_times[name] = []
         self.layer_times[name].append(elapsed)
 
-    def run(self, filename="layer_times.csv"):
+    def run(self):
         # Warm-up run
         with torch.no_grad():
             self.model(self.x)
@@ -55,12 +55,10 @@ class LayerProfiler:
             for name, times in self.layer_times.items()
         }
 
+        times_store = list(avg_times.values())
+
         # Total time
         total_time = round(sum(avg_times.values()), 2)
         avg_times["total_time"] = total_time
 
-        # Save results
-        headers = list(avg_times.keys())
-        row = list(avg_times.values())
-        write_partial("machine" , "device" , headers, row, filename=filename)
-        return avg_times
+        return times_store
