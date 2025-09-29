@@ -43,7 +43,6 @@ class Controller :
                                    routing_key= device_queue ,
                                    body=pickle.dumps(message_dict , )
                                    )
-        print(f"Sent {message_dict["message"]}")
 
     def listening(self , queue_num = 2):
         device_queue = self.queue_device_2
