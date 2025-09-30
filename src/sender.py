@@ -11,7 +11,7 @@ from src.Utils import get_output_sizes
 from src.time_layers import LayerProfiler
 
 MAX_SIZE_QUEUE = 16777216
-INFINITY_TIME = -1
+INFINITY_TIME = 1000000
 
 
 class MessageSender:

@@ -4,6 +4,8 @@ from src.sender import MessageSender
 from src.receiver import MessageReceiver
 from src.time_layers import LayerProfiler
 from src.controller import Controller
+from src.handle_data import Data
+from src.dijkstra import Dijkstra
 
 def load_config(path="config.yaml"):
     with open(path, "r") as f:
@@ -19,11 +21,23 @@ def start_running():
 
     if args.role == "sender":
         app = MessageSender(config)
+        app.run()
     elif args.role == "receiver":
         app = MessageReceiver(config)
+        app.run()
     else:
         app = Controller(config)
-    app.run()
+        data = app.run()
+        layer_times = data["layer_times"]
+        comm_times = data["comm_times"]
+        print("Layer times : " , layer_times)
+        print("Comm times : " , comm_times)
+        cost = Data(layer_times , comm_times ).run()
+        dijkstra_app = Dijkstra(cost)
+        dijkstra_app.run()
+        # print(f"size of layer times 1  {len(layer_times[0])}")
+        # print(f"size of layer times 2 {len(layer_times[1])}")
+        # print(f"size of comm times {len(comm_times)}")
 
 if __name__ == "__main__":
     start_running()

@@ -57,19 +57,8 @@ class Controller :
         else :
             return None
 
-    def get_num_msg_queue(self , queue_name):
-        if queue_name == 2 :
-            queue_name = self.queue_device_2
-        else :
-            queue_name = self.queue_device_1
-
-        queue_info = self.channel.queue_declare(queue=queue_name, passive=True)
-        return queue_info.method.message_count
-
-
     def run(self):
         count_clients = []
-        sent_start = False
         count_layer_times = []
         count_devices = []
 
@@ -97,9 +86,6 @@ class Controller :
                             count_devices.append(signal)
                             count_layer_times.append(data["message"])
                         if len(count_devices) == 2 :
-                            # print("Layer times ")
-                            # print(count_devices)
-                            # print(count_layer_times)
                             self.data["name_devices"] = count_devices 
                             self.data["layer_times"] = count_layer_times
                             break
@@ -108,15 +94,15 @@ class Controller :
                     if data is not None :
                         if data["signal"] == "comm_times":
                             print("Get communication times successfully !")
-                            # print(data["message"])
                             self.data["comm_times"] = data["message"]
                             break
                 break
 
         # print(self.name_devices)
-        print(self.data)
-        time.sleep(1)
+        # print(self.data)
+        time.sleep(0.1)
         self.clean()
+        return self.data
 
     def clean(self):
         """Clear both queues and close channel/connection"""
@@ -125,6 +111,9 @@ class Controller :
             self.channel.queue_purge(queue=self.queue_device_1)
             self.channel.queue_purge(queue=self.queue_device_2)
             self.channel.queue_purge(queue=self.queue_device_3)
+            self.channel.queue_delete(queue=self.queue_device_1 , if_empty=True , if_unused= True)
+            self.channel.queue_delete(queue=self.queue_device_2, if_empty=True, if_unused=True)
+            self.channel.queue_delete(queue=self.queue_device_3, if_empty=True, if_unused=True)
             print(f"Cleared queues: {self.queue_device_1}, {self.queue_device_2} , {self.queue_device_3}")
 
             # close channel & connection
