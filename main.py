@@ -30,10 +30,10 @@ def start_running():
         data = app.run()
         layer_times = data["layer_times"]
         comm_times = data["comm_times"]
-        print("Layer times : " , layer_times)
-        print("Comm times : " , comm_times)
+        # print("Layer times : " , layer_times)
+        # print("Comm times : " , comm_times)
         cost = Data(layer_times , comm_times ).run()
-        dijkstra_app = Dijkstra(cost)
+        dijkstra_app = Dijkstra(cost , data["name_devices"])
         dijkstra_app.run()
         # print(f"size of layer times 1  {len(layer_times[0])}")
         # print(f"size of layer times 2 {len(layer_times[1])}")

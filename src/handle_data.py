@@ -14,30 +14,25 @@ layer_times_3 = [16026.25, 14163.68, 44144.43, 18671.9, 41584.95, 21272.84, 6183
  2296.24, 3873.87, 26174.95, 4480.21, 482.07, 15115.18, 4723.94,
  152.32, 59023.33, 116022.15]
 
-layer_times_2.insert(0 , -1)
-layer_times_3.insert(0 , -1)
-comm_times.insert(0 , -1)
-
-num_points = len(layer_times_2) - 1
-
-print("[Num points] " , num_points)
-
 class Data:
  def __init__(self , layer_times , comm_times):
   self.layer_times_2 = layer_times[0]
   self.layer_times_3 = layer_times[1]
   self.comm_times = comm_times
+  self.layer_times_2.insert(0, -1)
+  self.layer_times_3.insert(0, -1)
+  self.comm_times.insert(0, -1)
 
   #
   self.capacity = len(self.layer_times_2)
   self.cost = [[-1 for _ in range((self.capacity) * 2)] for _ in range((self.capacity) * 2)]
-
+  self.num_points = len(self.layer_times_2) - 1
 
  def get_test_bed_cost(self):
   for i in range(1, self.capacity - 1):
    self.cost[i][i + 1] = self.layer_times_2[i + 1]
-   self.cost[i + num_points][i + num_points + 1] = self.layer_times_3[i + 1]
-   self.cost[i][i + num_points + 1] = self.comm_times[i] + self.layer_times_3[i + 1]
+   self.cost[i + self.num_points][i + self.num_points + 1] = self.layer_times_3[i + 1]
+   self.cost[i][i + self.num_points + 1] = self.comm_times[i] + self.layer_times_3[i + 1]
 
  def run(self):
   self.get_test_bed_cost()

@@ -2,9 +2,10 @@ from collections import deque
 
 
 class Dijkstra :
-    def __init__(self , cost ):
+    def __init__(self , cost , machine):
         self.cost = cost
         self.num_points = len(cost)//2 - 1
+        self.machine = machine
 
         # config node
         self.start = 1
@@ -75,9 +76,9 @@ class Dijkstra :
                 cut_point = i
                 break
 
-        print("=> Layer 1 : ", lst_nodes[:cut_point])
+        print(self.machine[0] , " : ", lst_nodes[:cut_point])
         lst_nodes = [x - self.num_points for x in lst_nodes]
-        print("=> Layer 2 : ", lst_nodes[cut_point:])
+        print(self.machine[1] , " : ",lst_nodes[cut_point :])
 
 
 
