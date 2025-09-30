@@ -74,7 +74,7 @@ class MessageReceiver:
                     res = layer_times_app.run()
                     print(len(res))
                     self.send_message({
-                        "signal": "time_layer " + str(self.host_name) + "2",
+                        "signal": "time_layer " + str(self.host_name) ,
                         "message": res
                     })
                 print("Start comm times function ")
