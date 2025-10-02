@@ -6,6 +6,7 @@ from src.time_layers import LayerProfiler
 from src.controller import Controller
 from src.handle_data import Data
 from src.dijkstra import Dijkstra
+from src.Utils import get_output_sizes
 
 def load_config(path="config.yaml"):
     with open(path, "r") as f:
@@ -41,3 +42,5 @@ def start_running():
 
 if __name__ == "__main__":
     start_running()
+    # config = load_config(path="config.yaml")
+    # print(get_output_sizes("cfg/yolo11n.yaml"))

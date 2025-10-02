@@ -1,10 +1,4 @@
-mode: run_all     # or layer_times or comm_times or run_all
 model: "yolo11n.pt"
-write_to_csv:
-  layer_time: layer_times.csv
-  comm_times: comm_times.csv
-
-
 time_layer:
   num_round: 2
   input_shape: [1, 3, 640, 640]
@@ -12,10 +6,10 @@ time_layer:
 rabbit:
   queue_device_1: "device1"
   queue_device_2: "device2"
-  address: "192.168.101.91"
-  username: "dai"
-  password: "dai"
-#  address: "127.0.0.1"
-#  username: "guest"
-#  password: "guest"
+#  address: "192.168.101.91"
+#  username: "dai"
+#  password: "dai"
+  address: "127.0.0.1"
+  username: "guest"
+  password: "guest"
   virtual_host: "/"

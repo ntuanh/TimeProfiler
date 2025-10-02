@@ -39,6 +39,31 @@ def write_partial( col_1 , col_2 , headers, row, data_1 ="None" , data_2 = "None
 
     print(f"[CSV] Saved row -> {filename}")
 
+def get_layer_output(cut_point , yaml_file = "cfg/yolo11n.yaml"):
+    """
+    Parse YOLO config YAML and return list of 'from' indices for all layers.
+    """
+    with open(yaml_file, "r") as f:
+        config = yaml.safe_load(f)
+
+    res = [cut_point - 1]
+    from_idx = []
+    # backbone and head sections
+    for section in ["backbone", "head"]:
+        for i, layer in enumerate(config.get(section, [])):
+            from_idx.append(layer[0])
+
+    # return from_idx
+
+    for i in range(cut_point , len(from_idx)):
+        # print(type(from_idx[0]))
+        if isinstance(from_idx[i] , list):
+            for j in from_idx[i]:
+                if j != -1 and j not in res and j < cut_point :
+                    res.append(j)
+    res.sort()
+    return tuple((cut_point , res))
+
 def get_output_sizes(cfg_path, img_size=(640, 640)):
     """
     Estimate output tensor sizes (MB) for each layer defined in YOLOv11 YAML.
@@ -95,4 +120,15 @@ def get_output_sizes(cfg_path, img_size=(640, 640)):
         sizes.append(size_mb)
         saved[idx] = (C, H, W)
 
+    for i in range(0 ,len(sizes)):
+        from_idx = get_layer_output(i)[1]
+        if len(from_idx) == 1 :
+            continue
+        temp = 0
+        for j in range(len(from_idx)):
+            temp = temp + sizes[from_idx[j] + 1]
+        sizes[i] = temp
     return sizes
+
+
+

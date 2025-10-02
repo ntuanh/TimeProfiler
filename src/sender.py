@@ -38,7 +38,7 @@ class MessageSender:
         self.channel.queue_declare(queue=self.queue_device_3, durable=True)
 
         project_root = Path.cwd()
-        cfg_path = project_root / "cfg" / "yolov11.yaml"
+        cfg_path = project_root / "cfg" / "yolo11n.yaml"
         self.size_data = get_output_sizes(cfg_path)
         self.start_time = time.time()
         self.num_round = self.config["time_layer"]["num_round"]
@@ -123,7 +123,7 @@ class MessageSender:
                     res = layer_times_app.run()
                     print(len(res))
                     self.send_message({
-                        "signal" : "time_layer " + str(self.host_name) ,
+                        "signal" : "time_layer " + str(self.host_name),
                         "message" : res
                     })
                 print("Start comm times function ")
