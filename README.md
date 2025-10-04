@@ -4,6 +4,7 @@ This project provides tools for profiling split inference tasks, including:
 
 1. **Measuring communication time** between two machines during split inference.
 2. **Measuring per-layer execution time** on a device, with automatic detection of CPU or GPU usage.
+3. **Controller mode** for managing and coordinating split inference experiments.
 
 ---
 
@@ -53,6 +54,26 @@ This project provides tools for profiling split inference tasks, including:
 
 ---
 
+## 3. Controller Mode
+
+The controller coordinates split inference experiments, manages configuration, and can trigger sender/receiver processes.
+
+**Steps:**
+
+1. **Edit `config.yaml`**  
+   Ensure all devices and experiment parameters are set.
+
+2. **Run the Controller**  
+   On the controller machine, run:
+   ```sh
+   python main.py --role controller
+   ```
+
+3. **Results:**  
+   The controller will manage the workflow and aggregate results as needed.
+
+---
+
 ## Example `config.yaml`
 
 ```yaml
@@ -68,6 +89,9 @@ rabbit:
   username: "guest"
   password: "guest"
   virtual_host: "/"
+controller:
+  devices: ["device1", "device2"]
+  experiment_name: "split_inference_test"
 ```
 
 ---
