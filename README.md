@@ -77,10 +77,9 @@ The controller coordinates split inference experiments, manages configuration, a
 ## Example `config.yaml`
 
 ```yaml
-mode: communication_times  # or 'layer_times'
-model: yolo11n.pt
+...
 time_layer:
-  num_round: 500
+  num_round: 10
   input_shape: [1, 3, 640, 640]
 rabbit:
   queue_device_1: "queue1"
@@ -92,6 +91,7 @@ rabbit:
 controller:
   devices: ["device1", "device2"]
   experiment_name: "split_inference_test"
+...
 ```
 
 ---
