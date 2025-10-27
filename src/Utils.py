@@ -128,6 +128,7 @@ def get_output_sizes(cfg_path, img_size=(640, 640)):
         for j in range(len(from_idx)):
             temp = temp + sizes[from_idx[j] + 1]
         sizes[i] = temp
+    print(f"[OUTPUT] of get_output_sizes {sizes}")
     return sizes
 
 
