@@ -27,18 +27,18 @@ def start_running():
         app = MessageReceiver(config)
         app.run()
     else:
-        app = Controller(config)
-        data = app.run()
+        data = Controller(config).run()
         layer_times = data["layer_times"]
         comm_times = data["comm_times"]
-        # print("Layer times : " , layer_times)
-        # print("Comm times : " , comm_times)
+        print("Layer times [0]: " , layer_times[0])
+        print("Layer times [1]: ", layer_times[1])
+        print("Comm times : " , comm_times)
         cost = Data(layer_times , comm_times ).run()
         dijkstra_app = Dijkstra(cost , data["name_devices"])
         dijkstra_app.run()
-        # print(f"size of layer times 1  {len(layer_times[0])}")
-        # print(f"size of layer times 2 {len(layer_times[1])}")
-        # print(f"size of comm times {len(comm_times)}")
+        print(f"size of layer times 1  {len(layer_times[0])}")
+        print(f"size of layer times 2 {len(layer_times[1])}")
+        print(f"size of comm times {len(comm_times)}")
 
 if __name__ == "__main__":
     start_running()
