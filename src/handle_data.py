@@ -49,7 +49,7 @@ class Data:
    self.cost[i][i + 1] = 0
    self.cost[i + self.num_points][i + self.num_points + 1] = 0
    self.cost[i][i + self.num_points + 1] = self.comm_times[i - 1] + max(self.cost_1 , self.cost_2)
-   print(self.cost[i][i + self.num_points + 1])
+   print("cost" ,self.cost[i][i + self.num_points + 1])
 
  def run(self):
   self.get_test_bed_cost()
